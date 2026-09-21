@@ -6,6 +6,11 @@ class maze_solver:
         self.position = []
         self.failed_positions = []
         self.path_best = []
+        self.failure = 0
+        self.success = 1
+        self.inconclusive = 2
+        self.recursive_calls = 0
+
 
     def find_start_end(self):
         coordinates = []
@@ -58,11 +63,6 @@ class maze_solver:
             pass
 
         return legal_moves
-    
-    def add_to_failed_positions(self, path):
-        for coordinate in path:
-            if coordinate in self.failed_positions:
-                self.failed_positions.append(coordinate)
 
     def move(self, position, direction):
         if direction == "R":
@@ -85,22 +85,36 @@ class maze_solver:
             print("No Solution")
             return None
         
-        self.solve_maze(self.start, (self.start,), ())
+        solution = self.home_made_solve_maze(self.start, (self.start,), ())
+
+        if solution == self.failure:
+            print("No solution")
 
         print(self.path_best)
+        print(f"Number of function calls: {self.recursive_calls}")
 
         return None
 
 
-    def solve_maze(self, current_position, path_position_current, path_direction_current):
+    def home_made_solve_maze(self, current_position, path_position_current, path_direction_current):
+        # Initialize overall_verdict so in case we have all failures we dont get any issues
+        overall_verdict = self.failure
+
+        #Benchmarking
+        self.recursive_calls += 1
+
         # If we have reached a best path then if our path is greater than that path just terminate
         if len(path_direction_current) >= len(self.path_best) and len(self.path_best) != 0:
-            return
+            return self.inconclusive
+        
+        # If we are in a failed position then we can't succeed so don't bother searching
+        if current_position in self.failed_positions:
+            return self.failure
 
         # If we have reached "E" then stop and set that as our best path
         if current_position == self.end:
             self.path_best = path_direction_current
-            return
+            return self.success
         
         # I need this recurrsion to know which directions it can go
         for direction in self.get_legal_moves(current_position):
@@ -114,4 +128,14 @@ class maze_solver:
             if next_position in path_position_current:
                 continue
             # Move on to the next part of the branch!
-            self.solve_maze(next_position, new_path_position, new_path_direction)
+            # If we reach the end tell parent we reached the end
+            verdict = self.home_made_solve_maze(next_position, new_path_position, new_path_direction)
+            if verdict == self.success:
+                overall_verdict = self.success
+            elif verdict == self.inconclusive and overall_verdict != self.success:
+                overall_verdict = self.inconclusive
+        # If we exhaustively searched every branch from the current position then mark that position as failed
+        if overall_verdict == self.failure:
+            self.failed_positions.append(current_position)
+
+        return overall_verdict
