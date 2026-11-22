@@ -1,7 +1,8 @@
 from caveman_maze_solver import caveman_solver
-from dinosaur_maze_solver import dinosaur_solver
-from mazesolver import maze_solver
-from chrono_caveman_solver import chrono_caveman_solver # pyright: ignore[reportMissingImports]
+from oracle_caveman_solver import oracle_caveman_solver
+from chief_caveman_solver import chief_caveman_solver
+from chrono_caveman_solver import chrono_caveman_solver
+from og_caveman import og_caveman
 import sys
 sys.setrecursionlimit(5000)
 
@@ -28,30 +29,19 @@ def main():
                   "maze_020.txt", # 25x29 Open solveable maze
                   "maze_021.txt" # 25x29 Open unsolveable maze
                   ]
-
-    # maze = load_maze(maze_names[10])
     
-    # print("OG CAVEMAN BABY")
-    # og = maze_solver(maze)
-    # og.run()
-
-    # print("CHRONO CAVEMAN BABY")
-    # timeMan = chrono_caveman_solver(maze)
-    # timeMan.run()
-    
-    
-    for i in range(len(maze_names)):
+    for i in range(20, 21):
         print(f"Maze Number: {i + 1}")
             
         maze = load_maze(maze_names[i])
 
-        print("CHRONO CAVEMAN BABY")
-        modern = chrono_caveman_solver(maze)
-        modern.run()
+        print("ORACLE CAVEMAN BABY")
+        oracle = oracle_caveman_solver(maze)
+        oracle.run()
 
-        print("OG CAVEMAN BABY")
-        og = maze_solver(maze)
-        og.run()
+        print("CHIEF CAVEMAN BABY")
+        chief = chief_caveman_solver(maze)
+        chief.run()
 
         print()
 

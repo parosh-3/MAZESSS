@@ -1,3 +1,5 @@
+import time
+
 class chrono_caveman_solver:
     
     def __init__(self, maze):
@@ -106,8 +108,10 @@ class chrono_caveman_solver:
         if len(self.get_legal_moves(self.start)) == 0 or len(self.get_legal_moves(self.end)) == 0:
             print("No Solution")
             return None
-        
+
+        start = time.perf_counter()
         self.home_made_solve_maze(self.start, (self.start,), ())
+        end = time.perf_counter()
 
         if (len(self.path_best) == 0):
             print("No Solution")
@@ -116,6 +120,7 @@ class chrono_caveman_solver:
         print(f"Path Length: {len(self.path_best)}")
         print(f"Improved Time: {self.improved_arrivals}")
         print(f"First Discoveries: {self.first_discoveries}")
+        print(f"Time Elapsed: {end - start:.6f} seconds")
 
         return None
 

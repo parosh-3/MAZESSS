@@ -1,12 +1,18 @@
-class dinosaur_solver:
-    
+import heapq
+import time
+
+class chief_caveman_solver:
+    #Caveman clone
     def __init__(self, maze):
         self.maze = maze
         self.path = []
         self.position = []
         self.failed_positions = []
         self.path_best = []
-        self.calls = 0
+        self.loop_iterations = 0
+        self.improved_time = 0
+        self.first_discoveries = 0
+
 
     def find_start_end(self):
         coordinates = []
@@ -23,8 +29,8 @@ class dinosaur_solver:
                 pass
         if len(coordinates) == 4:
             start1, start2, end1, end2 = coordinates
-            self.start = [start2, start1]
-            self.end = [end2, end1]
+            self.start = (start2, start1)
+            self.end = (end2, end1)
 
         else:
             self.coordinates = []
@@ -63,21 +69,16 @@ class dinosaur_solver:
 
         # Prioritize moves based on smallest manhattan distance
         return sorted(legal_moves, key=legal_moves.get)
-    
-    def add_to_failed_positions(self, path):
-        for coordinate in path:
-            if coordinate in self.failed_positions:
-                self.failed_positions.append(coordinate)
 
     def move(self, position, direction):
         if direction == "R":
-            return[position[0], position[1] + 1]
+            return (position[0], position[1] + 1)
         elif direction == "L":
-            return [position[0], position[1] - 1]
+            return (position[0], position[1] - 1)
         elif direction == "U":
-            return [position[0] - 1, position[1]]
+            return (position[0] - 1, position[1])
         elif direction == "D":
-            return [position[0] + 1, position[1]]
+            return (position[0] + 1, position[1])
 
 
     def run(self):
@@ -89,42 +90,52 @@ class dinosaur_solver:
         if len(self.get_legal_moves(self.start)) == 0 or len(self.get_legal_moves(self.end)) == 0:
             print("No Solution")
             return None
-        
-        self.solve_maze(self.start, (self.start,), ())
 
-        #print(self.path_best)
-        print(f"Number of calls: {self.calls}")
-        print(f"Path Length: {len(self.path_best)}")
+        start = time.perf_counter()
+        steps = self.home_made_solve_maze(self.start)
+        end = time.perf_counter()
+
+        if steps == 0:
+            print("No solution")
+
+        print(f"Number of iterations: {self.loop_iterations}")
+        print(f"First Discoveries: {self.first_discoveries}")
+        print(f"Path Length: {steps}")
+        print(f"Time Elapsed: {end - start:.6f} seconds")
+
 
         return None
 
 
-    def solve_maze(self, current_position, path_position_current, path_direction_current):
+    def home_made_solve_maze(self, start):
+        pq = []
+        steps = 0
+        position = start
+        arrival_time = {}
+        heapq.heappush(pq, (steps, position))
+        while len(pq) != 0:
+            self.loop_iterations += 1
+            steps, position = heapq.heappop(pq)
 
-        self.calls += 1
-
-        # If we have reached a best path then if our path is greater than that path just terminate
-        if len(path_direction_current) >= len(self.path_best) and len(self.path_best) != 0:
-            return
-
-        # If we have reached "E" then stop and set that as our best path
-        if current_position == self.end:
-            self.path_best = path_direction_current
-            return
-        
-        # I need this recurrsion to know which directions it can go
-        for direction in self.get_legal_moves(current_position):
-            # Get the next position
-            next_position = self.move(current_position, direction)
-            # Using tuples because lists get modified for all instances of the function
-            new_path_direction = path_direction_current + (direction,)
-            # Samething as above
-            new_path_position = path_position_current + (next_position,)
-            # Prevents going in loops while only stopping to search a single branch not the entire node/loop
-            if next_position in path_position_current:
+            if steps >= arrival_time.get(position, float('inf')):
                 continue
-            # Move on to the next part of the branch!
-            if self.calls % 10000000 == 0:
-                print(f"Dino calls: {self.calls:,}")
+            else:
+                if position in arrival_time:
+                    self.improved_time += 1
+                else:
+                    self.first_discoveries += 1
+                arrival_time[position] = steps
+
+            if position == self.end:
+                return steps
+
+            moves = self.get_legal_moves(position)
+
+            for move in moves:
+                new_position = self.move(position, move)
+                if new_position not in arrival_time:
+                    heapq.heappush(pq, (steps + 1, new_position))
+
             
-            self.solve_maze(next_position, new_path_position, new_path_direction)
+
+        return 0

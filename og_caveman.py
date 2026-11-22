@@ -1,4 +1,6 @@
-class maze_solver:
+import time
+
+class og_caveman:
     #Caveman clone
     def __init__(self, maze):
         self.maze = maze
@@ -90,7 +92,9 @@ class maze_solver:
             print("No Solution")
             return None
         
+        start = time.perf_counter()
         solution = self.home_made_solve_maze(self.start, (self.start,), ())
+        end = time.perf_counter()
 
         if solution == self.failure:
             print("No solution")
@@ -99,7 +103,7 @@ class maze_solver:
         print(f"Number of function calls: {self.recursive_calls}")
         print(f"Memory Prunes: {self.memory_prunes}")
         print(f"Path Length: {len(self.path_best)}")
-        #print(self.failed_positions)
+        print(f"Time Elapsed: {end - start:.6f} seconds")
 
         return None
 

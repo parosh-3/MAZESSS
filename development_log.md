@@ -152,3 +152,12 @@ Maze 16 a 50x50 maze with 865 indpendent loops.
 - Dino:
     Number of function calls: Lower bound of 4.18 * 10^22
     Path Length: Likely found to be 92
+
+### Chief and Oracle Cavemen Enter
+Chief Caveman is just Dijkstra's algorithm.
+Oracle Caveman — A Search*
+    An independently developed A* graph-search implementation using Manhattan distance as an admissible and consistent heuristic. Employs a min-priority queue ordered by estimated total path cost, breaking ties in favor of states closer to the destination. Uses a dictionary to track finalized arrival times and prevent redundant exploration. Guarantees shortest paths in four-directional, unit-cost mazes.
+I added timing and they are just better than the other cavemen. No question.
+I brought back the buggy Caveman from the dead (OG Caveman) and he lost on the unsolvable mazes. Chief performed the best then Oracle. However, Oracle performed better on solvable mazes compared to Chief. The biggest improvement for Oracle was using manhattan based tie-breaker rather than least steps.
+Observed metric:
+On Maze 016, changing the tie-breaker reduced Oracle's iterations from 1,987 to 213.
