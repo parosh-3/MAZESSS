@@ -94,3 +94,19 @@ It failed because when he gets to a cross-roads he prioritizes going down even t
     sorted sorts based on insertion order, when manhattan distances are ties, into the dictionary which inserts in D -> U -> R -> L order
     The algorithm because of recurrsion explores D branch first then updates failure
     R branch then recieves that memory
+
+**Commit of this version**
+https://github.com/parosh-3/MAZESSS/tree/cf3ba1c09fb5ebac95ecba3675ef9903b7d8f65d
+
+### Caveman Fix Attempt Three
+Success! The fix combines the idea of familial memory and priority ordering. When there is a tie between manhattan distances it gets flagged as a cross-roads and then Caveman remembers everything up until that cross-roads but gets rid of memory of the subsequent children. So at cross-road, D and R share the same memory but when branch D finishes searching it deletes its memory and R branch uses only the memory achieved up until the cross-road. The same tie-breaker as the previous attempt at a fix. Metrics
+| Metric | Dino | Caveman |
+|---|---:|---:|
+| Recursive calls | 294 | 323 |
+| Path length | 32 | 32 |
+Outcome he found the shortest path however on maze_004.txt he failed to achieve that score in a shorter amount of recurrsive calls than Dino.
+
+**Why did Caveman perform worse?**
+I have no clue, Dino only prunes based on best path and if he walks in circles. So the memory should save Caveman steps/calls. A plausible explanation is that Dino searches based on D -> U -> R -> L order while Caveman searches based on distance.
+
+### Caveman vs Dino (With priority move decisions)

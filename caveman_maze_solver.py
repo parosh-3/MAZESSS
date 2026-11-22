@@ -38,35 +38,52 @@ class caveman_solver:
     
     def get_legal_moves(self, position, direction_traveled = ""):
         legal_moves = {}
+        smallest_distance = float('inf')
+        has_tie = False
         if len(position) != 2:
             return
 
         try:
             if self.maze[position[0] + 1][position[1]] != "#" and direction_traveled != "U":
                 legal_moves["D"] = self.get_manhattan_distance([position[0] + 1, position[1]])
+                smallest_distance = legal_moves["D"]
         except IndexError:
             pass
 
         try:
             if self.maze[position[0] - 1][position[1]] != "#" and position[0] - 1 >= 0 and direction_traveled != "D":
                 legal_moves["U"] = self.get_manhattan_distance([position[0] - 1, position[1]])
+                if (smallest_distance == legal_moves["U"]):
+                    has_tie = True
+                elif (smallest_distance > legal_moves["U"]):
+                    smallest_distance = legal_moves["U"]
         except IndexError:
             pass
 
         try:
             if self.maze[position[0]][position[1] + 1] != "#" and direction_traveled != "L":
                 legal_moves["R"] = self.get_manhattan_distance([position[0], position[1] + 1])
+                if (smallest_distance == legal_moves["R"]):
+                    has_tie = True
+                elif (smallest_distance > legal_moves["R"]):
+                    smallest_distance = legal_moves["R"]
+                    has_tie = False
         except IndexError:
             pass
 
         try:
             if self.maze[position[0]][position[1] - 1] != "#" and position[1] - 1 >= 0 and direction_traveled != "R":
                 legal_moves["L"] = self.get_manhattan_distance([position[0], position[1] - 1])
+                if (smallest_distance == legal_moves["L"]):
+                    has_tie = True
+                elif (smallest_distance > legal_moves["L"]):
+                    smallest_distance = legal_moves["L"]
+                    has_tie = False
         except IndexError:
             pass
 
         # Prioritize moves based on smallest manhattan distance
-        return sorted(legal_moves, key=legal_moves.get)
+        return sorted(legal_moves, key=legal_moves.get), has_tie
 
     def move(self, position, direction):
         if direction == "R":
@@ -120,10 +137,13 @@ class caveman_solver:
         if current_position == self.end:
             self.path_best = path_direction_current
             return self.success
+
+        moves, has_tie = self.get_legal_moves(current_position)
+        og_length = len(self.failed_positions)
         
         # I need this recurrsion to know which directions it can go
-        for direction in self.get_legal_moves(current_position):
-            # Get the next position
+        for direction in moves:
+            # Get the next position  
             next_position = self.move(current_position, direction)
             # Using tuples because lists get modified for all instances of the function
             new_path_direction = path_direction_current + (direction,)
@@ -139,6 +159,8 @@ class caveman_solver:
                 overall_verdict = self.success
             elif verdict == self.inconclusive and overall_verdict != self.success:
                 overall_verdict = self.inconclusive
+            if has_tie:
+                del self.failed_positions[og_length:]
         # If we exhaustively searched every branch from the current position then mark that position as failed
         if overall_verdict == self.failure:
             #print(f"FAILED: {current_position}")

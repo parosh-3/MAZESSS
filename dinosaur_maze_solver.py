@@ -29,36 +29,40 @@ class dinosaur_solver:
         else:
             self.coordinates = []
 
+    def get_manhattan_distance(self, position) -> int:
+        return abs(self.end[0] - position[0]) + abs(self.end[1] - position[1])
+    
     def get_legal_moves(self, position, direction_traveled = ""):
-        legal_moves = []
+        legal_moves = {}
         if len(position) != 2:
             return
 
         try:
             if self.maze[position[0] + 1][position[1]] != "#" and direction_traveled != "U":
-                legal_moves.append("D")
+                legal_moves["D"] = self.get_manhattan_distance([position[0] + 1, position[1]])
         except IndexError:
             pass
 
         try:
             if self.maze[position[0] - 1][position[1]] != "#" and position[0] - 1 >= 0 and direction_traveled != "D":
-                legal_moves.append("U")
+                legal_moves["U"] = self.get_manhattan_distance([position[0] - 1, position[1]])
         except IndexError:
             pass
 
         try:
             if self.maze[position[0]][position[1] + 1] != "#" and direction_traveled != "L":
-                legal_moves.append("R")
+                legal_moves["R"] = self.get_manhattan_distance([position[0], position[1] + 1])
         except IndexError:
             pass
 
         try:
             if self.maze[position[0]][position[1] - 1] != "#" and position[1] - 1 >= 0 and direction_traveled != "R":
-                legal_moves.append("L")
+                legal_moves["L"] = self.get_manhattan_distance([position[0], position[1] - 1])
         except IndexError:
             pass
 
-        return legal_moves
+        # Prioritize moves based on smallest manhattan distance
+        return sorted(legal_moves, key=legal_moves.get)
     
     def add_to_failed_positions(self, path):
         for coordinate in path:
