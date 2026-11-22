@@ -1,5 +1,5 @@
 class maze_solver:
-    
+    #Caveman clone
     def __init__(self, maze):
         self.maze = maze
         self.path = []
