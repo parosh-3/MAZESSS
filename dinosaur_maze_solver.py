@@ -100,11 +100,12 @@ class dinosaur_solver:
 
 
     def solve_maze(self, current_position, path_position_current, path_direction_current):
+
+        self.calls += 1
+
         # If we have reached a best path then if our path is greater than that path just terminate
         if len(path_direction_current) >= len(self.path_best) and len(self.path_best) != 0:
             return
-        
-        self.calls += 1
 
         # If we have reached "E" then stop and set that as our best path
         if current_position == self.end:

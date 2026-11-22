@@ -109,4 +109,46 @@ Outcome he found the shortest path however on maze_004.txt he failed to achieve 
 **Why did Caveman perform worse?**
 I have no clue, Dino only prunes based on best path and if he walks in circles. So the memory should save Caveman steps/calls. A plausible explanation is that Dino searches based on D -> U -> R -> L order while Caveman searches based on distance.
 
+**Commit of this version**
+https://github.com/parosh-3/MAZESSS/tree/6876d5ee1f7063a696f1331479fecf7b8dd15a68
+
 ### Caveman vs Dino (With priority move decisions)
+Using the same priority move decision making system they achieved the same amount of calls
+| Metric | Dino | Caveman |
+|---|---:|---:|
+| Recursive calls | 323 | 323 |
+| Path length | 32 | 32 |
+There was a bug where Dino measured only calls where he didn't reject moves due to the length of path pruning. So I'll restore the older D -> U -> R -> L move order and see if he does better or worse on maze_004.txt. With that being said take the numbers above this one with a grain of salt for Dino specifically.
+After running:
+| Metric | Dino | Caveman |
+|---|---:|---:|
+| Recursive calls | 323 | 323 |
+| Path length | 32 | 32 |
+I tried Caveman vs Dino on mazes 1-5 and only on maze 2 was there a difference giving results
+| Metric | Dino | Caveman |
+|---|---:|---:|
+| Recursive calls | 124 | 62 |
+| Path length | 25 | 25 |
+That heavily implies that his memory pruning is heavily dependent on maze structure. On maze 6 Caveman showed no improved speed over Dino I did interupt the search. I ran Caveman for about a minute and he wasn't able to know that the maze had no solution. I'll check now with a memory prune counter to see how many times it gets activated in all of the mazes.
+
+**Final Results**
+Caveman across all tests has shown that in maze 2 his improvement was 50% less calls. However, running them against eachother on maze 2 again and making Dino use manhattan priority based movement gave these results
+| Metric | Dino | Caveman |
+|---|---:|---:|
+| Recursive calls | 62 | 62 |
+| Path length | 25 | 25 |
+I had added another metric for Caveman and he used the memory pruning 0 times across mazes 1-5. This doesn't prove that his memory system doesn't work but it gives evidence for that. It does give evidence that the manhattan move ordering can reduce work while not making more work. 
+
+## November 22, 2026 - Chrono Caveman Arrives
+Chrono Caveman improves upon Caveman's idea of memory by storing arrival time per cell. If he arrives later or at the same time prune. This is provably correct so I'll leave that as a proof for the reader. He still uses Manhattan distance ordering. The next major improvement would be to order his exploration more efficiently.
+
+**Benchmark of the Day**
+Maze 16 a 50x50 maze with 865 indpendent loops.
+- Chrono Caveman:
+    Number of function calls: 106105
+    Path Length: 92
+    Improved Time: 53084
+    First Discoveries: 1748
+- Dino:
+    Number of function calls: Lower bound of 4.18 * 10^22
+    Path Length: Likely found to be 92

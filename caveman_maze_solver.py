@@ -10,6 +10,9 @@ class caveman_solver:
         self.success = 1
         self.inconclusive = 2
         self.recursive_calls = 0
+        self.memory_prunes = 0
+        self.failed_debugging = []
+        self.visited_old_failed = 0
 
 
     def find_start_end(self):
@@ -113,6 +116,9 @@ class caveman_solver:
 
         #print(self.path_best)
         print(f"Number of function calls: {self.recursive_calls}")
+        #print(f"Number of times visited old memories {self.visited_old_failed}")
+        print(f"Number of times memory pruning was used: {self.memory_prunes}")
+        #print(self.failed_positions)
         print(f"Path Length: {len(self.path_best)}")
 
         return None
@@ -128,9 +134,13 @@ class caveman_solver:
         # If we have reached a best path then if our path is greater than that path just terminate
         if len(path_direction_current) >= len(self.path_best) and len(self.path_best) != 0:
             return self.inconclusive
+
+        #if current_position in self.failed_debugging:
+            #self.visited_old_failed += 1
         
         # If we are in a failed position then we can't succeed so don't bother searching
         if current_position in self.failed_positions:
+            self.memory_prunes += 1
             return self.failure
 
         # If we have reached "E" then stop and set that as our best path
@@ -142,7 +152,7 @@ class caveman_solver:
         og_length = len(self.failed_positions)
         
         # I need this recurrsion to know which directions it can go
-        for direction in moves:
+        for direction in moves: 
             # Get the next position  
             next_position = self.move(current_position, direction)
             # Using tuples because lists get modified for all instances of the function
@@ -160,11 +170,12 @@ class caveman_solver:
             elif verdict == self.inconclusive and overall_verdict != self.success:
                 overall_verdict = self.inconclusive
             if has_tie:
+                #print(f"Deleting {len(self.failed_positions) - og_length} memories")
                 del self.failed_positions[og_length:]
+
         # If we exhaustively searched every branch from the current position then mark that position as failed
         if overall_verdict == self.failure:
-            #print(f"FAILED: {current_position}")
-            #print(f"PATH: {path_position_current}")
+            #self.failed_debugging.append(current_position)
             self.failed_positions.append(current_position)
 
         return overall_verdict
