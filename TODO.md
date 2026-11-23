@@ -56,3 +56,8 @@ Compare FireAnt against Dino, Caveman, and other maze-solving algorithms using:
 - [ ] Compare the corrected algorithm against Dino.
 
 **Important:** Investigate the correctness issue independently before consulting existing solutions or receiving algorithmic hints.
+
+**Concluded**
+OG Caveman's memory pruning idea itself is the bug. The shortest path would be entirely possible by changing the movement behavior. I developed a corrected verision that keeps memory at cross-roads where there are two possible moves that can reduce manhattan distance by 1. It does correctly produce the intended result throughout my tests, however, the pruning is almost never used so for most mazes the new Caveman is basically just a glorified Dino. The other solution which is much more efficient was taken from my time solving `LeetCode 3341 — Find Minimum Time to Reach Last Room I`. There I kept a map that kept track of the earliest arrival to each room and then any room that I got to at a later or equal time was pruned. This algorithm was much more efficient than the new Caveman and was aptly named ChronoCaveman.
+
+OG Caveman remains one of my most efficient recursive DFS approaches for determining reachability, but it cannot guarantee the shortest path.
