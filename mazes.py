@@ -3,6 +3,7 @@ from oracle_caveman_solver import oracle_caveman_solver
 from chief_caveman_solver import chief_caveman_solver
 from chrono_caveman_solver import chrono_caveman_solver
 from og_caveman import og_caveman
+from diagonal_oracle_caveman import oracle_diagonal
 import sys
 sys.setrecursionlimit(5000)
 
@@ -27,10 +28,12 @@ def main():
                   "maze_018.txt", # 25x29 dead-end heavy solveable maze
                   "maze_019.txt", # 25x29 dead-end heavy unsolveable maze
                   "maze_020.txt", # 25x29 Open solveable maze
-                  "maze_021.txt" # 25x29 Open unsolveable maze
+                  "maze_021.txt", # 25x29 Open unsolveable maze
+                  "maze_022.txt",
+                  "maze_023.txt"
                   ]
     
-    for i in range(20, 21):
+    for i in range(len(maze_names)):
         print(f"Maze Number: {i + 1}")
             
         maze = load_maze(maze_names[i])
@@ -39,9 +42,9 @@ def main():
         oracle = oracle_caveman_solver(maze)
         oracle.run()
 
-        print("CHIEF CAVEMAN BABY")
-        chief = chief_caveman_solver(maze)
-        chief.run()
+        print("DIAGONAL ORACLE")
+        diagonal = oracle_diagonal(maze)
+        diagonal.run()
 
         print()
 

@@ -161,3 +161,6 @@ I added timing and they are just better than the other cavemen. No question.
 I brought back the buggy Caveman from the dead (OG Caveman) and he lost on the unsolvable mazes. Chief performed the best then Oracle. However, Oracle performed better on solvable mazes compared to Chief. The biggest improvement for Oracle was using manhattan based tie-breaker rather than least steps.
 Observed metric:
 On Maze 016, changing the tie-breaker reduced Oracle's iterations from 1,987 to 213.
+
+### Visualization
+Added visualization powered by pygame. Now we can watch Oracle and Chief go through mazes.
