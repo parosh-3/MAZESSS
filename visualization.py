@@ -2,6 +2,7 @@ import pygame
 from mazes import load_maze
 from chief_visual import chief_visual
 from oracle_visual import oracle_visual
+from fire_ant_visual import fire_ant_visual
 
 def main():
     pygame.init()
@@ -36,9 +37,9 @@ def main():
     i = 15
     maze = load_maze(maze_names[i])
 
-    chief = oracle_visual(maze)
+    chief = fire_ant_visual(maze)
 
-    explorer = chief.run()
+    explorer = chief.run(100, 1848418374)
 
     running = True
 
@@ -53,16 +54,17 @@ def main():
                 running = False
 
         try:
-            position = next(explorer)
+            position, colony = next(explorer)
+            position = (position[0], position[1], colony)
             visited.add(position)
         except StopIteration:
-            i = (i + 1) % len(maze_names)
-            pygame.display.set_caption(f"Caveman Cinema — {maze_names[i]}")
-            maze = load_maze(maze_names[i])
-            chief = oracle_visual(maze)
-            explorer = chief.run()
-            visited.clear()
-            position = next(explorer)
+            # i = (i + 1) % len(maze_names)
+            # pygame.display.set_caption(f"Caveman Cinema — {maze_names[i]}")
+            # maze = load_maze(maze_names[i])
+            # chief = oracle_visual(maze)
+            # explorer = chief.run()
+            # visited.clear()
+            # position = next(explorer)
 
             pass
         
@@ -71,7 +73,7 @@ def main():
         draw_visited_rooms(visited, screen, maze)
         draw_position(maze, screen, position)
         pygame.display.flip()
-        clock.tick(20)
+        clock.tick(80)
 
     pygame.quit()
 
@@ -85,7 +87,7 @@ def draw_visited_rooms(visited, screen, maze):
     for position in visited:
         pixel_x = position[1] * cell_width
         pixel_y = position[0] * cell_height
-        pygame.draw.rect(screen, (19, 41, 75), (pixel_x, pixel_y, cell_width, cell_height))
+        pygame.draw.rect(screen, ((255 - 20 * position[2]) % 255, (5 * position[2]) % 255, (10 * position[2]) % 255), (pixel_x, pixel_y, cell_width, cell_height))
 
 
 def draw_position(maze, screen, caveman):

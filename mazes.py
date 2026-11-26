@@ -4,6 +4,7 @@ from chief_caveman_solver import chief_caveman_solver
 from chrono_caveman_solver import chrono_caveman_solver
 from og_caveman import og_caveman
 from diagonal_oracle_caveman import oracle_diagonal
+from fire_ant_colony_solver import fire_ant_solver as fas
 import sys
 sys.setrecursionlimit(5000)
 
@@ -33,18 +34,18 @@ def main():
                   "maze_023.txt"
                   ]
     
-    for i in range(len(maze_names)):
-        print(f"Maze Number: {i + 1}")
+    for i in range(10):
+        print(f"Maze Number: {15 + 1}")
             
-        maze = load_maze(maze_names[i])
+        maze = load_maze(maze_names[15])
 
-        print("ORACLE CAVEMAN BABY")
-        oracle = oracle_caveman_solver(maze)
-        oracle.run()
+        print("FIRE ANT COLONY!!!!!")
+        FireAnt = fas(maze)
+        FireAnt.run(100, 1848418374)
 
-        print("DIAGONAL ORACLE")
-        diagonal = oracle_diagonal(maze)
-        diagonal.run()
+        # print("\nOracle Caveman")
+        # oracle = oracle_caveman_solver(maze)
+        # oracle.run()
 
         print()
 
